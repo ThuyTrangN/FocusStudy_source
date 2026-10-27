@@ -50,6 +50,31 @@ def test_unavailable_models_cannot_start_calibration(client):
  assert client.delete(url).status_code==200
  assert client.get(url+'/report').status_code==404
 
+def test_infer_uses_landmarks_bbox_when_rotation_matrix_missing():
+ from types import SimpleNamespace
+ from vision.adapters import Vision
+ import numpy as np
+
+ class FakeHead:
+  def detect(self, image):
+   landmark = [SimpleNamespace(x=0.5, y=0.5), SimpleNamespace(x=0.6, y=0.4), SimpleNamespace(x=0.4, y=0.6)]
+   return SimpleNamespace(face_landmarks=[landmark], facial_transformation_matrixes=[])
+
+ class FakeGaze:
+  def step(self, frame):
+   return SimpleNamespace(bboxes=np.array([[90, 70, 130, 140]], dtype=float), yaw=np.array([0.1]), pitch=np.array([0.2]))
+
+ v = Vision.__new__(Vision)
+ v.head = FakeHead()
+ v.gaze = FakeGaze()
+ v.mp = SimpleNamespace(Image=lambda **kwargs: object(), ImageFormat=SimpleNamespace(SRGB='srgb'))
+
+ results = v.infer(np.zeros((200, 200, 3), dtype=np.uint8))
+ assert results['head']['reason'] in (None, 'face_landmarks_detected_without_transform')
+ assert results['gaze']['valid'] is True
+ assert 'yaw' in results['gaze'] and 'pitch' in results['gaze']
+
+
 def test_calibration_finish_reports_sample_progress(client,monkeypatch):
  class Available:
   def health(self):return {'head':{'available':True},'gaze':{'available':False}}
@@ -95,6 +120,17 @@ def test_gaze_calibration_target_changes_are_logged(client,monkeypatch):
  assert any(row['kind']=='calibration_target' and row['data']['target']=='left' for row in report['logs'])
  assert len(report['calibrations'])==1 and report['calibrations'][0]['data']['branch']=='gaze'
  assert report['session']['calibration']['gaze']['targets']['center']['yaw']==1.
+
+def test_calibration_cancel(client,monkeypatch):
+ class Available:
+  def health(self):return {'head':{'available':True},'gaze':{'available':True}}
+ monkeypatch.setattr(m,'engine',Available())
+ s=session(client);url=f"/api/sessions/{s['id']}"
+ cmd(client,s,'start');cmd(client,s,'support_on')
+ started=client.post(url+'/calibration',json={'branch':'head','action':'start'}).json()
+ assert started['calibrating']=='head'
+ cancelled=client.post(url+'/calibration',json={'branch':'head','action':'cancel'}).json()
+ assert cancelled.get('calibrating') is None and 'calibration_samples' not in cancelled
 
 def test_feedback_ab_and_rating(client):
  s=session(client);cmd(client,s,'start');state=m.states[s['id']]

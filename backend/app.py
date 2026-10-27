@@ -196,8 +196,12 @@ class Calibrate(BaseModel):
 def calibration(sid:str,a:Calibrate,u=Depends(user)):
     s=accrue(load(sid,u))
     if s['status']!='active' or not s['support']:raise HTTPException(409,'Bật hỗ trợ trước khi hiệu chỉnh')
-    if a.branch not in ('head','gaze') or a.action not in ('start','finish','target'):raise HTTPException(422,'Hiệu chỉnh không hợp lệ')
+    if a.branch not in ('head','gaze') or a.action not in ('start','finish','target','cancel'):raise HTTPException(422,'Hiệu chỉnh không hợp lệ')
     branch_health=(engine.health() if engine else {}).get(a.branch,{})
+    if a.action=='cancel':
+        s['calibrating']=None
+        for key in ('calibration_samples','calibration_target_samples','calibration_target','calibration_started'):s.pop(key,None)
+        s['state_version']+=1;s['counters']={};save(s);return view(s)
     if a.action=='target':
         if a.branch!='gaze' or s.get('calibrating')!='gaze':raise HTTPException(409,'Chỉ đổi mục tiêu khi đang hiệu chỉnh gaze')
         if a.target not in GAZE_TARGETS:raise HTTPException(422,'Mục tiêu gaze không hợp lệ')
