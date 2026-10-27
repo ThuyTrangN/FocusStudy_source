@@ -74,6 +74,42 @@ def test_infer_uses_landmarks_bbox_when_rotation_matrix_missing():
  assert results['gaze']['valid'] is True
  assert 'yaw' in results['gaze'] and 'pitch' in results['gaze']
 
+def test_head_calibration_completes_automatically_after_stable_samples(client,monkeypatch):
+ class Available:
+  def health(self):return {'head':{'available':True},'gaze':{'available':True}}
+  def infer(self,rgb):return {'head':{'valid':True,'yaw':2.,'pitch':1.},'gaze':{'valid':False,'reason':'not_used'},'face_status':'visible'}
+ monkeypatch.setattr(m,'engine',Available())
+ s=session(client);url=f"/api/sessions/{s['id']}"
+ cmd(client,s,'start');cmd(client,s,'support_on')
+ started=client.post(url+'/calibration',json={'branch':'head','action':'start'}).json()
+ state=m.states[s['id']];state['calibration_started']=time.monotonic()-6
+ image=io.BytesIO();Image.new('RGB',(4,4)).save(image,format='JPEG')
+ encoded='data:image/jpeg;base64,'+base64.b64encode(image.getvalue()).decode()
+ for frame_id in range(1,16):
+  response=client.post(url+'/frames',json={'image':encoded,'frame_id':frame_id,'state_version':state['state_version']})
+  assert response.status_code==200
+ finished=response.json()['session']
+ assert finished['calibrating'] is None
+ assert finished['calibration']['head']['valid'] is True
+
+def test_gaze_calibration_cycles_targets_and_completes_automatically(client,monkeypatch):
+ class Available:
+  def health(self):return {'head':{'available':True},'gaze':{'available':True}}
+  def infer(self,rgb):return {'head':{'valid':True,'yaw':2.,'pitch':1.},'gaze':{'valid':True,'yaw':5.,'pitch':6.},'face_status':'visible'}
+ monkeypatch.setattr(m,'engine',Available())
+ s=session(client);url=f"/api/sessions/{s['id']}"
+ cmd(client,s,'start');cmd(client,s,'support_on')
+ started=client.post(url+'/calibration',json={'branch':'gaze','action':'start','target':'center'}).json()
+ state=m.states[s['id']];state['calibration_started']=time.monotonic()-6
+ image=io.BytesIO();Image.new('RGB',(4,4)).save(image,format='JPEG')
+ encoded='data:image/jpeg;base64,'+base64.b64encode(image.getvalue()).decode()
+ for frame_id in range(1,16):
+  response=client.post(url+'/frames',json={'image':encoded,'frame_id':frame_id,'state_version':state['state_version']})
+  assert response.status_code==200
+ finished=response.json()['session']
+ assert finished['calibrating'] is None
+ assert finished['calibration']['gaze']['valid'] is True
+ assert all(target['samples']==3 for target in finished['calibration']['gaze']['targets'].values())
 
 def test_calibration_finish_reports_sample_progress(client,monkeypatch):
  class Available:

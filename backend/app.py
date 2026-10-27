@@ -100,7 +100,7 @@ def view(s):
         samples=s.get('calibration_samples',[])
         stable=True
         if s['calibrating']=='head' and len(samples)>=2:
-            stable=bool(np.max(np.std(np.asarray(samples),axis=0))<=5)
+            stable=bool(np.max(np.std(np.asarray(samples[-15:],dtype=float),axis=0))<=7.5)
         elapsed=max(0,now-s.get('calibration_started',now))
         progress={'branch':s['calibrating'],'sample_count':len(samples),'required_samples':15,'elapsed_seconds':elapsed,'required_seconds':5,'stable':stable}
         if s['calibrating']=='gaze':
@@ -112,6 +112,21 @@ def view(s):
             progress['ready']=len(samples)>=15 and elapsed>=5 and stable
         out['calibration_progress']=progress
     return out
+
+def complete_calibration(s,branch):
+    samples=s['calibration_samples']
+    arr=np.asarray(samples[-15:] if branch=='head' else samples,dtype=float)
+    profile={'samples':len(samples),'valid':True}
+    if branch=='head':
+        profile.update(yaw=float(np.median(arr[:,0])),pitch=float(np.median(arr[:,1])))
+    else:
+        target_samples=s['calibration_target_samples']
+        target_profiles={target:{'samples':len(target_samples[target]),'yaw':float(np.median(np.asarray(target_samples[target])[:,0])),'pitch':float(np.median(np.asarray(target_samples[target])[:,1]))} for target in GAZE_TARGETS}
+        profile.update(yaw_min=float(np.percentile(arr[:,0],5)-5),yaw_max=float(np.percentile(arr[:,0],95)+5),pitch_min=float(np.percentile(arr[:,1],5)-5),pitch_max=float(np.percentile(arr[:,1],95)+5),targets=target_profiles)
+    s['calibration'][branch]=profile;s['calibrating']=None
+    for key in ('calibration_samples','calibration_target_samples','calibration_target','calibration_started'):s.pop(key,None)
+    s['state_version']+=1;s['counters']={};log(s,'calibration',{'branch':branch,**profile})
+    return profile
 
 def save(s):
     with db() as c:c.execute('UPDATE sessions SET data=? WHERE id=?',(json.dumps(s),s['id']))
@@ -128,7 +143,7 @@ def create(a:NewSession,u=Depends(user)):
             d=c.execute('SELECT id,filename FROM documents WHERE id=? AND user_id=?',(a.document_id,u['id'])).fetchone()
             if d:
                 doc_name=d['filename']
-    s=dict(id=str(uuid.uuid4()),**a.model_dump(),document_name=doc_name,status='created',support=False,state_version=0,active_seconds=0.,break_seconds=0.,created_at=time.time(),tick=time.monotonic(),calibration={},prompt=None,counters={})
+    s=dict(id=str(uuid.uuid4()),**a.model_dump(),document_name=doc_name,status='created',support=False,state_version=0,active_seconds=0.,break_seconds=0.,created_at=time.time(),tick=time.monotonic(),calibration={},prompt=None,counters={},policy_config={'gap_s':12})
     with db() as c:c.execute('INSERT INTO sessions VALUES(?,?,?)',(s['id'],u['id'],json.dumps(s)))
     states[s['id']]=s;return view(s)
 @app.get('/api/sessions')
@@ -214,8 +229,13 @@ def calibration(sid:str,a:Calibrate,u=Depends(user)):
         if a.branch=='gaze':
             s['calibration_target']=a.target;s['calibration_target_samples']={target:[] for target in GAZE_TARGETS}
     else:
+        if a.action=='finish' and s.get('calibration',{}).get(a.branch,{}).get('valid'):
+            return view(s)
         samples=s.get('calibration_samples',[])
-        if s.get('calibrating')!=a.branch:raise HTTPException(422,'Hiệu chỉnh chưa được bắt đầu; thử lại')
+        if s.get('calibrating')!=a.branch:
+            if s.get('calibration',{}).get(a.branch,{}).get('valid'):
+                return view(s)
+            raise HTTPException(422,'Hiệu chỉnh chưa được bắt đầu; thử lại')
         if a.branch=='gaze':
             target_samples=s.get('calibration_target_samples',{})
             progress=', '.join(f"{target}: {len(target_samples.get(target,[]))}/{GAZE_SAMPLES_PER_TARGET}" for target in GAZE_TARGETS if len(target_samples.get(target,[]))<GAZE_SAMPLES_PER_TARGET)
@@ -228,16 +248,8 @@ def calibration(sid:str,a:Calibrate,u=Depends(user)):
         elapsed=max(0,time.monotonic()-s.get('calibration_started',0))
         if not np.isfinite(arr).all():raise HTTPException(422,'Mẫu hiệu chỉnh không hữu hạn; hãy thu lại.')
         if elapsed<5:raise HTTPException(422,f"Đã nhận đủ mẫu nhưng mới thu {elapsed:.1f}/5 giây. Chờ thêm rồi thử lại.")
-        if a.branch=='head' and np.max(np.std(arr,axis=0))>5:raise HTTPException(422,'Tư thế chưa ổn định trong các mẫu. Nhìn giữa màn hình, giữ đầu yên rồi thu lại.')
-        profile={'samples':len(samples),'valid':True}
-        if a.branch=='head':profile.update(yaw=float(np.median(arr[:,0])),pitch=float(np.median(arr[:,1])))
-        else:
-            target_samples=s['calibration_target_samples']
-            target_profiles={target:{'samples':len(target_samples[target]),'yaw':float(np.median(np.asarray(target_samples[target])[:,0])),'pitch':float(np.median(np.asarray(target_samples[target])[:,1]))} for target in GAZE_TARGETS}
-            profile.update(yaw_min=float(np.percentile(arr[:,0],5)-5),yaw_max=float(np.percentile(arr[:,0],95)+5),pitch_min=float(np.percentile(arr[:,1],5)-5),pitch_max=float(np.percentile(arr[:,1],95)+5),targets=target_profiles)
-        s['calibration'][a.branch]=profile;s['calibrating']=None
-        for key in ('calibration_samples','calibration_target_samples','calibration_target','calibration_started'):s.pop(key,None)
-        s['state_version']+=1;s['counters']={};log(s,'calibration',{'branch':a.branch,**profile})
+        if a.branch=='head' and np.max(np.std(np.asarray(arr[-15:],dtype=float),axis=0))>7.5:raise HTTPException(422,'Tư thế chưa ổn định trong các mẫu gần nhất. Nhìn giữa màn hình, giữ đầu yên rồi chờ thêm.')
+        profile=complete_calibration(s,a.branch)
     save(s);return view(s)
 class Frame(BaseModel):
     image:str=Field(max_length=3000000);frame_id:int;state_version:int
@@ -256,7 +268,7 @@ async def frame(sid:str,a:Frame,u=Depends(user)):
         except Exception:raise HTTPException(422,'Ảnh không hợp lệ hoặc quá lớn')
         inference_started=time.monotonic()
         result=await run_in_threadpool(engine.infer,rgb)
-        if time.monotonic()-inference_started>2:
+        if time.monotonic()-inference_started>5:
             s['counters']={};raise HTTPException(409,'Kết quả quá cũ; giảm độ phân giải hoặc kiểm tra máy')
         if s['status']!='active' or not s['support'] or a.state_version!=s['state_version']:raise HTTPException(409,'Bỏ kết quả muộn')
         s['last_frame']=a.frame_id
@@ -278,6 +290,24 @@ async def frame(sid:str,a:Frame,u=Depends(user)):
                     if not posture:v['reason']='head_outside_verified_range'
                     v['outside']=not(profile['yaw_min']<=v['yaw']<=profile['yaw_max'] and profile['pitch_min']<=v['pitch']<=profile['pitch_max'])
                     v['direction']='down' if (v['pitch']>profile['pitch_max'] if float(os.getenv('GAZE_DOWN_SIGN','1'))>0 else v['pitch']<profile['pitch_min']) else 'other'
+        if s.get('calibrating')=='gaze':
+            target_samples=s.get('calibration_target_samples',{})
+            target=s.get('calibration_target')
+            if target in GAZE_TARGETS and len(target_samples.get(target,[]))>=GAZE_SAMPLES_PER_TARGET:
+                next_target=next((item for item in GAZE_TARGETS if len(target_samples.get(item,[]))<GAZE_SAMPLES_PER_TARGET),None)
+                if next_target:
+                    s['calibration_target']=next_target
+                    log(s,'calibration_target',{'target':next_target,'automatic':True})
+            all_targets_complete=all(len(target_samples.get(target,[]))>=GAZE_SAMPLES_PER_TARGET for target in GAZE_TARGETS)
+            elapsed=time.monotonic()-s.get('calibration_started',time.monotonic())
+            if all_targets_complete and elapsed>=5:
+                complete_calibration(s,'gaze')
+        elif s.get('calibrating')=='head':
+            samples=s.get('calibration_samples',[])
+            elapsed=time.monotonic()-s.get('calibration_started',time.monotonic())
+            stable=len(samples)>=15 and np.max(np.std(np.asarray(samples[-15:],dtype=float),axis=0))<=7.5
+            if len(samples)>=15 and elapsed>=5 and stable:
+                complete_calibration(s,'head')
         candidate=evaluate(s,result)
         if candidate and not s.get('calibrating'):
             s['prompt']={'id':str(uuid.uuid4()),**candidate,'created_mono':time.monotonic(),'shown_at':None};log(s,'prompt_proposed',s['prompt'])
