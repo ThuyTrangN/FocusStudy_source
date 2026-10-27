@@ -1,0 +1,4 @@
+-r requirements.txt
+mediapipe>=0.10.20,<0.11
+opencv-python>=4.9,<5
+# L2CS: follow docs/models.md; install PyTorch matching your machine separately.
