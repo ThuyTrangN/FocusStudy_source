@@ -1,11 +1,13 @@
-# Phạm vi bản chạy thử
+# Giới hạn kiểm chứng - 28/10/2026
 
-Đây là triển khai phục vụ phát triển và demo cục bộ. Account/password thật lưu backend, cookie phiên HttpOnly, SQLite tách phiên theo chủ sở hữu. Không có cơ chế xác minh email/khôi phục mật khẩu qua email hay vận hành production.
+Prototype cục bộ, chưa đủ nghiệm thu toàn bộ. Đọc REQUIREMENTS_TRACEABILITY/DECISIONS và evidence thay các kết quả lịch sử.
 
-Frame hiện truyền bằng REST tuần tự thay vì WebSocket trong đề xuất ban đầu. Cách này đơn giản hóa kiểm thử, giữ tối đa một yêu cầu frame đang đợi ở client; backend bỏ yêu cầu khi model bận. Nếu chuyển WebSocket, giữ nguyên kiểm tra session/frame/state version và cơ chế dừng camera.
+- Model3file giữ nguyên, nạp CPU cả hai; blank adapter và gaze crop tổng hợp forward chạy thật. Chưa camera vật lý, trục/calibration/held-out/accuracy, ánh sáng/kính/multiple-face hoặc FPS/latency người thật.
+- Offline retry giữ ID/version nhưng chưa tái dựng thời điểm pause; crash có thể mất phần sau snapshot cuối. Backend checkpoint5s/shutdown độc lập browser; event start/end và blocked log đã có, nhưng state intervals/replay offline chưa đầy đủ.
+- PDF.js đã render chữ trong IAB; chưa Chrome/Edge độc lập, textlayer/chọn chữ/screenreader. Canvas nội dung PDF chưa accessible đầy đủ.
+- Xóa PDF unlink lỗi giữ DB; crash giữa unlink và commit vẫn cần reconciliation/tombstone. Backup SQLite fixture đạt, backup bộ PDF/đường dẫn khác máy chưa tự động.
+- MediaPipe có metrics theo privacy notice chính thức; smoke log thử clearcut thất bại. Chưa audit network độc lập. Không tuyên bố toàn bộ dependency offline tuyệt đối; app không lưu frame mặc định.
+- Browser CSV download tool timeout; API CSV/BOM/null/formula kiểm được. Zoom200/screenreader/camera permission thực chưa đủ. Responsive DOM/ảnh không thay toàn bộ UX.
+- Không có SUS/4pilot/8evaluation/accuracy/hiệu quả học đã đo. A/B cùng model; timer-only không baselineA. Kế hoạch nghiên cứu vẫn chưa thực hiện.
 
-Hai adapter dùng model thật khi đủ thư viện/checkpoint; thiếu model báo unavailable. Không có kết quả webcam thực hoặc accuracy đã đo trong gói mã nguồn. Chưa thể xác nhận hướng góc, ngưỡng, khả năng phân biệt gaze trong/ngoài màn hình cho từng máy/người nếu chưa chạy pilot. Các ngưỡng là khởi tạo; cần chỉnh trên dữ liệu phát triển và đóng băng trước đánh giá cuối.
-
-Các kiểm thử phần mềm không thay thế kiểm thử webcam, quyền camera trình duyệt, kính/ánh sáng yếu, máy CPU chậm và UX thực tế. Không suy từ nhìn màn hình ra tập trung, từ nhìn xuống ra mất tập trung hoặc từ không thấy mặt ra chắc chắn rời chỗ.
-
-Cần giữ dữ liệu thử sơ bộ và 8 người đánh giá cuối riêng. Ghi video chỉ khi có đồng ý riêng; không bật ghi ảnh mặc định. Phiên A/B tự nhiên không trộn với kịch bản diễn hành vi kỹ thuật.
+Không commit/push/deploy, không sửa/xóa data người dùng, không tự mở webcam hoặc thay bản model/frame upstream.

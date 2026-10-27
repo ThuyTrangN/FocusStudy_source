@@ -8,6 +8,8 @@ from pathlib import Path
 
 try:
     from reportlab.lib import colors
+    from reportlab.platypus.tableofcontents import TableOfContents
+    from reportlab.lib.utils import ImageReader
     from reportlab.lib.enums import TA_CENTER, TA_LEFT
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
@@ -22,6 +24,8 @@ try:
         Spacer,
         Table,
         TableStyle,
+        Image,
+        PageBreak,
     )
 except ImportError as exc:
     raise SystemExit(
@@ -155,6 +159,17 @@ class ReportDocument(BaseDocTemplate):
         )
         self.styles = styles
 
+    def afterFlowable(self,flowable):
+        if isinstance(flowable,Paragraph) and flowable.style.name in ('FocusH2','FocusH3'):
+            level=0 if flowable.style.name=='FocusH2' else 1
+            title=flowable.getPlainText()
+            if level == 1 and not re.match(r'^\d+\.\d+', title):
+                return
+            key='section-'+str(self.seq.nextf('heading'))
+            self.canv.bookmarkPage(key)
+            self.canv.addOutlineEntry(title,key,level=level,closed=False)
+            self.notify('TOCEntry',(level,title,self.page,key))
+
     @staticmethod
     def draw_chrome(canvas, doc):
         canvas.saveState()
@@ -166,7 +181,7 @@ class ReportDocument(BaseDocTemplate):
         canvas.setFillColor(MUTED)
         canvas.drawString(19 * mm, height - 10 * mm, "FOCUSSTUDY · BÁO CÁO TOÀN DIỆN")
         canvas.line(19 * mm, 13 * mm, width - 19 * mm, 13 * mm)
-        canvas.drawString(19 * mm, 8.5 * mm, "Tài liệu prototype · cập nhật 27/10/2026")
+        canvas.drawString(19 * mm, 8.5 * mm, "Tài liệu prototype · cập nhật 28/10/2026")
         canvas.drawRightString(width - 19 * mm, 8.5 * mm, f"Trang {doc.page}")
         canvas.restoreState()
 
@@ -180,8 +195,8 @@ def create_styles() -> dict[str, ParagraphStyle]:
             "FocusBody",
             parent=base["BodyText"],
             fontName=regular,
-            fontSize=9.1,
-            leading=13,
+            fontSize=10.1,
+            leading=14.8,
             textColor=INK,
             spaceAfter=5,
             alignment=TA_LEFT,
@@ -213,8 +228,8 @@ def create_styles() -> dict[str, ParagraphStyle]:
             "FocusH2",
             parent=base["Heading2"],
             fontName=bold,
-            fontSize=12,
-            leading=15,
+            fontSize=15,
+            leading=19,
             textColor=INK,
             spaceBefore=10,
             spaceAfter=5,
@@ -224,8 +239,8 @@ def create_styles() -> dict[str, ParagraphStyle]:
             "FocusH3",
             parent=base["Heading3"],
             fontName=bold,
-            fontSize=10,
-            leading=13,
+            fontSize=11.5,
+            leading=15,
             textColor=GREEN,
             spaceBefore=7,
             spaceAfter=4,
@@ -234,8 +249,8 @@ def create_styles() -> dict[str, ParagraphStyle]:
         "bullet": ParagraphStyle(
             "FocusBullet",
             fontName=regular,
-            fontSize=9,
-            leading=12,
+            fontSize=9.7,
+            leading=14,
             textColor=INK,
             leftIndent=13,
             firstLineIndent=-9,
@@ -245,8 +260,8 @@ def create_styles() -> dict[str, ParagraphStyle]:
         "table": ParagraphStyle(
             "FocusTable",
             fontName=regular,
-            fontSize=7.6,
-            leading=10,
+            fontSize=8.3,
+            leading=11.5,
             textColor=INK,
             spaceAfter=0,
             splitLongWords=1,
@@ -254,8 +269,8 @@ def create_styles() -> dict[str, ParagraphStyle]:
         "table_header": ParagraphStyle(
             "FocusTableHeader",
             fontName=bold,
-            fontSize=7.7,
-            leading=10,
+            fontSize=8.4,
+            leading=11.5,
             textColor=colors.white,
             spaceAfter=0,
             splitLongWords=1,
@@ -263,8 +278,8 @@ def create_styles() -> dict[str, ParagraphStyle]:
         "code": ParagraphStyle(
             "FocusCode",
             fontName=regular,
-            fontSize=7.7,
-            leading=10,
+            fontSize=8.4,
+            leading=11.5,
             textColor=INK,
             leftIndent=5,
             rightIndent=5,
@@ -297,6 +312,23 @@ def parse_markdown(text: str, styles: dict[str, ParagraphStyle]) -> list:
         if not stripped or stripped in ("---", "***"):
             index += 1
             continue
+
+        if stripped.startswith('<!--'):
+            while '-->' not in lines[index] and index+1<len(lines):index+=1
+            index+=1;continue
+        if stripped=='[TOC]':
+            story.append(PageBreak())
+            story.append(Paragraph('Mục lục',styles['h1']))
+            toc=TableOfContents()
+            toc.levelStyles=[ParagraphStyle('TOC0',fontName=regular_font,fontSize=9.5,leading=13.5,spaceBefore=5),ParagraphStyle('TOC1',fontName=regular_font,fontSize=8.5,leading=12,leftIndent=12)]
+            story.extend([toc,PageBreak()]);index+=1;continue
+        picture=re.fullmatch(r'!\[([^\]]*)\]\(([^)]+)\)',stripped)
+        if picture:
+            label,relative=picture.groups();path=SOURCE.parent/relative
+            if not path.is_file():raise FileNotFoundError(path)
+            w,h=ImageReader(str(path)).getSize();factor=min(172*mm/w,190*mm/h)
+            story.extend([Image(str(path),width=w*factor,height=h*factor),Paragraph(inline_markup(label,regular_font),styles['meta']),Spacer(1,8)])
+            index+=1;continue
 
         if stripped.startswith("```"):
             code_lines = []
@@ -357,6 +389,8 @@ def parse_markdown(text: str, styles: dict[str, ParagraphStyle]) -> list:
         heading = re.match(r"^(#{1,3})\s+(.+)$", stripped)
         if heading:
             level, title = len(heading.group(1)), heading.group(2)
+            if level == 2 and title.startswith('15. Manifest'):
+                story.append(PageBreak())
             style = styles["title"] if level == 1 and first_title else styles[f"h{level}"]
             story.append(Paragraph(inline_markup(title, regular_font), style))
             if level == 1:
@@ -396,7 +430,7 @@ def main() -> None:
         story = parse_markdown(SOURCE.read_text(encoding="utf-8"), styles)
         OUTPUT.parent.mkdir(parents=True, exist_ok=True)
         temporary_output = OUTPUT.with_name(f".{OUTPUT.stem}.building.pdf")
-        ReportDocument(temporary_output, styles).build(story)
+        ReportDocument(temporary_output, styles).multiBuild(story)
         try:
             os.replace(temporary_output, OUTPUT)
             final_output = OUTPUT

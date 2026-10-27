@@ -1,0 +1,52 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26100-SP0",
+  "packages": {
+    "fastapi": "0.162.0",
+    "starlette": "1.10.0",
+    "uvicorn": "0.54.0",
+    "pydantic": "2.14.1",
+    "numpy": "2.5.4",
+    "Pillow": "12.3.0",
+    "httpx": "0.28.1",
+    "pytest": "9.1.1",
+    "pypdf": "6.21.3",
+    "reportlab": "4.5.1",
+    "mediapipe": "0.10.35",
+    "torch": "2.14.1+cpu",
+    "torchvision": "0.29.1+cpu",
+    "l2cs": "0.0.1",
+    "face_detection": "1.0.5",
+    "opencv-python": "4.14.0.94"
+  },
+  "opencv_runtime": "5.0.0",
+  "node": "v24.22.1",
+  "frontend_declared": {
+    "name": "focusstudy-web",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+      "dev": "vite --host 127.0.0.1",
+      "build": "vite build",
+      "preview": "vite preview --host 127.0.0.1"
+    },
+    "dependencies": {
+      "lucide-react": "^0.468.0",
+      "pdfjs-dist": "^6.4.299",
+      "react": "^19.1.0",
+      "react-dom": "^19.1.0"
+    },
+    "devDependencies": {
+      "@vitejs/plugin-react": "^4.5.0",
+      "vite": "^6.3.0"
+    }
+  },
+  "frontend_installed": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "vite": "6.4.5",
+    "lucide-react": "0.468.0",
+    "pdfjs-dist": "6.4.299"
+  }
+}

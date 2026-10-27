@@ -1,0 +1,1 @@
+Final test evidence: pytest-final.txt (raw captured stdout). Baseline:13 passed/1 warning. Final:27 passed/1 warning. Tests use tmp_path and synthetic stubs, not user data or ML accuracy.

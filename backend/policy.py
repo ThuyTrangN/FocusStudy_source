@@ -10,7 +10,7 @@ def evaluate(state, signal, now=None):
     if state.get('status') != 'active' or not state.get('support'):
         counters.clear(); return None
     last = state.get('last_sample')
-    if last is not None and now-last > config['gap_s']: counters.clear()
+    if last is not None and (now <= last or now-last > min(2,config['gap_s'])): counters.clear()
     state['last_sample'] = now
     head=signal.get('head',{}); gaze=signal.get('gaze',{})
     checks = {

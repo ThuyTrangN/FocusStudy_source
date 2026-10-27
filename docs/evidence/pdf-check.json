@@ -1,0 +1,296 @@
+{
+  "pages": 41,
+  "sha256": "94d472a8ea0f095affa302f4756765b7dab30ab0c9015a26726cfff3048734ac",
+  "page_checks": [
+    {
+      "page": 1,
+      "text_chars": 1051,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 2,
+      "text_chars": 3741,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 3,
+      "text_chars": 2298,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 4,
+      "text_chars": 2959,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 5,
+      "text_chars": 2986,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 6,
+      "text_chars": 1760,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 7,
+      "text_chars": 2079,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 8,
+      "text_chars": 1866,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 9,
+      "text_chars": 1737,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 10,
+      "text_chars": 3194,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 11,
+      "text_chars": 1595,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 12,
+      "text_chars": 544,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 13,
+      "text_chars": 2945,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 14,
+      "text_chars": 2622,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 15,
+      "text_chars": 3275,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 16,
+      "text_chars": 1803,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 17,
+      "text_chars": 3234,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 18,
+      "text_chars": 3150,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 19,
+      "text_chars": 3165,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 20,
+      "text_chars": 1636,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 21,
+      "text_chars": 429,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 22,
+      "text_chars": 1399,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 23,
+      "text_chars": 3391,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 24,
+      "text_chars": 1859,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 25,
+      "text_chars": 1247,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 26,
+      "text_chars": 3338,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 27,
+      "text_chars": 3123,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 28,
+      "text_chars": 3043,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 29,
+      "text_chars": 3488,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 30,
+      "text_chars": 3545,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 31,
+      "text_chars": 1393,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 32,
+      "text_chars": 2355,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 33,
+      "text_chars": 1531,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 34,
+      "text_chars": 1010,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 35,
+      "text_chars": 1941,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 36,
+      "text_chars": 2392,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 37,
+      "text_chars": 2367,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 38,
+      "text_chars": 2774,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 39,
+      "text_chars": 2882,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 40,
+      "text_chars": 2207,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    },
+    {
+      "page": 41,
+      "text_chars": 724,
+      "outside_pagebox": 0,
+      "black_square": 0,
+      "raw_markers": false
+    }
+  ],
+  "issues": [],
+  "outline_top_level": 21,
+  "tagged": false
+}

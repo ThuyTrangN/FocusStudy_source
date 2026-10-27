@@ -1,0 +1,26 @@
+[
+  {
+    "requested": 375,
+    "client": 360,
+    "inner": 375,
+    "scroll": 360
+  },
+  {
+    "requested": 768,
+    "client": 753,
+    "inner": 768,
+    "scroll": 753
+  },
+  {
+    "requested": 1024,
+    "client": 1009,
+    "inner": 1024,
+    "scroll": 1009
+  },
+  {
+    "requested": 1440,
+    "client": 1425,
+    "inner": 1440,
+    "scroll": 1425
+  }
+]

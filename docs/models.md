@@ -6,6 +6,18 @@ Web/login/timer không cần checkpoint. Để nhận head/gaze, cần cài thê
 
 MediaPipe Face Landmarker và L2CS-Net đã được cài trong `.venv`; checkpoint nằm trong `models/`. Backend cần được khởi động lại sau khi thay dependency hoặc checkpoint. Mở `/api/health` để xác nhận cả `head.available` và `gaze.available` là `true`. Việc model nạp được chưa xác nhận webcam, đơn vị/dấu góc hoặc accuracy trên máy/người học cụ thể.
 
+## Kiểm chứng ngày 28/10/2026
+
+Trong bản6829e9c này, runtime đã được cài riêng .venv Python3.12.14: MediaPipe0.10.35, torch2.14.1+cpu, torchvision0.29.1+cpu, L2CS0.0.1 tại commit dưới đây. Không CUDA, không đổi Python toàn máy. Xem evidence/environment.json.
+
+Ba checkpoint đã có từ Git LFS, giữ nguyên195377107bytes, không chạy lại các lệnh tải/conversion bên dưới trên máy hiện tại. Chỉ dùng phần tải cho máy mới thiếu model. SHA256 và bytes từng file ở evidence/model-smoke.json. Đọc lại license upstream trước khi phân phối; notice HF chưa xác minh mới được qua web tool lượt này.
+
+Chạy `.\.venv\Scripts\python.exe scripts/verify_models.py`: load hai nhánh thành công; adapter ảnh đen absent và mạng gaze forward crop tổng hợp finite. Đây là inference synthetic smoke, chưa webcam/calibration người thật, chưa accuracy hoặc latencybenchmark. Bộ sửa lỗi bbox/frame/calibration upstream được giữ nguyên.
+
+MediaPipe Tasks gửi metrics sử dụng/hiệu năng theo [privacy notice chính thức](https://developers.google.com/edge/mediapipe/solutions/tasks#mediapipe_tasks_privacy_notice). Smoke đã ghi clearcut attempt thất bại mạng. Notice nói input không gửi Google; ứng dụng chưa audit network độc lập. ConsentUI đã giải thích; cần xác minh/kiểm soát trước pilot. Không tự đổi firewall hoặc downgrade model upstream để che log.
+
+Cài torchCPU xong mới cài L2CS, không chạy pip song song vào một venv. RetinaFace weights đi kèm package face_detection. Giữ runtime CPU trước khi có số đo. Kiểm /api/health và thực hiện protocol người dùng riêng, không suy từ availabletrue ra nghiệm thu camera.
+
 ## MediaPipe
 
 Tại thư mục dự án, PowerShell:
@@ -42,7 +54,7 @@ torch.save(state, "models/L2CSNet_gaze360.pkl")
 
 Nguồn HF ghi checkpoint được chuyển đổi trực tiếp từ trọng số Gaze360 upstream sang safetensors; SHA-256 của file đã cài: `75405bdc01f7086b3887280fe50c28a14bc62463a53fa749781e4a3cf98eca0e`. Conversion chỉ đọc tensor safetensors và lưu state dict cục bộ theo định dạng mà L2CS Pipeline upstream đang dùng.
 
-**Giấy phép:** mã nguồn L2CS là MIT; trọng số Gaze360 đi kèm điều khoản dữ liệu Gaze360, trong đó nêu rõ hạn chế ứng dụng thương mại. Chỉ dùng checkpoint sau khi xem `LICENSE-NOTICE.md` của model card và điều khoản nguồn; không phát tán checkpoint hoặc dùng cho mục đích thương mại nếu chưa có quyền phù hợp. Dự án không phân phối lại checkpoint. Bản CPU phù hợp kiểm tra đầu tiên; chỉ đổi `L2CS_DEVICE=cuda:0` sau khi PyTorch xác nhận CUDA hoạt động.
+**Giấy phép:** mã nguồn L2CS là MIT; trọng số Gaze360 đi kèm điều khoản dữ liệu Gaze360, trong đó nêu rõ hạn chế ứng dụng thương mại. Chỉ dùng checkpoint sau khi xem `LICENSE-NOTICE.md` của model card và điều khoản nguồn; không phát tán checkpoint hoặc dùng cho mục đích thương mại nếu chưa có quyền phù hợp. Bản upstream hiện có3checkpoint qua Git LFS; nhóm cần xác minh quyền lưu/phân phối theo notice trước khi chia sẻ tiếp, không tự coi MIT của code là giấy phép trọng số. Bản CPU phù hợp kiểm tra đầu tiên; chỉ đổi `L2CS_DEVICE=cuda:0` sau khi PyTorch xác nhận CUDA hoạt động.
 
 ## Xác nhận
 

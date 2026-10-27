@@ -203,7 +203,8 @@ def test_pdf_document_upload_and_management(client):
     assert fake_pdf.status_code == 422
 
     # Valid PDF upload via multipart
-    valid_pdf_content = b'%PDF-1.4 sample pdf content for focus study test'
+    from pypdf import PdfWriter
+    pdf=PdfWriter();pdf.add_blank_page(width=300,height=400);buffer=io.BytesIO();pdf.write(buffer);valid_pdf_content=buffer.getvalue()
     upload = client.post('/api/documents', files={'file': ('lecture_ch1.pdf', valid_pdf_content, 'application/pdf')})
     assert upload.status_code == 200
     doc = upload.json()
@@ -230,7 +231,7 @@ def test_pdf_document_upload_and_management(client):
     assert s['document_name'] == 'lecture_ch1.pdf'
 
     # Switch session document
-    valid_pdf_content2 = b'%PDF-1.5 second document'
+    pdf=PdfWriter();pdf.add_blank_page(width=400,height=500);buffer=io.BytesIO();pdf.write(buffer);valid_pdf_content2=buffer.getvalue()
     upload2 = client.post('/api/documents', files={'file': ('lecture_ch2.pdf', valid_pdf_content2, 'application/pdf')})
     doc2_id = upload2.json()['id']
     switched = client.post(f"/api/sessions/{s['id']}/document", json={'document_id': doc2_id}).json()

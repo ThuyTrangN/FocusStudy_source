@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-28",
+  "branch": "feature/focusstudy-dashboard-handoff-20261028",
+  "base_commit": "6829e9c6abacabe160175d7fc66baca34cc16af9",
+  "repository": "https://github.com/ThuyTrangN/FocusStudy_source",
+  "pytest": {
+    "passed": 27,
+    "warnings": 1,
+    "seconds": 30.67,
+    "warning": "StarletteDeprecationWarning: httpx testclient"
+  },
+  "frontend_build": {
+    "passed": true,
+    "vite": "6.4.5",
+    "seconds": 6.32,
+    "initial_sandbox_attempt": "esbuild filesystem access denied; rerun with appropriate permissions passed"
+  },
+  "git_lfs_fsck": "OK",
+  "upstream_adapter_and_models": "unchanged",
+  "new_webcam_or_accuracy_tests": false,
+  "excluded_new_local_artifacts": [
+    ".venv",
+    "node_modules",
+    "frontend/dist",
+    ".env",
+    "data",
+    "tmp"
+  ],
+  "inherited_tracked_data_documents": "retained unchanged from upstream"
+}

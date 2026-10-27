@@ -1,0 +1,42 @@
+{
+  "health": {
+    "ok": true,
+    "models": {
+      "head": {
+        "available": true,
+        "error": null
+      },
+      "gaze": {
+        "available": true,
+        "error": null
+      }
+    },
+    "mode": "real-inference-only"
+  },
+  "create_retry_same_id": true,
+  "checkpoint_before_get_active_seconds": 5.546999999998661,
+  "has_manifest": true,
+  "csv_status": 200,
+  "csv_bom": "efbbbf",
+  "csv_columns": [
+    "time_utc_epoch",
+    "type",
+    "frame_id",
+    "head_yaw_deg",
+    "head_pitch_deg",
+    "gaze_yaw_deg",
+    "gaze_pitch_deg",
+    "head_valid",
+    "gaze_valid",
+    "active_seconds",
+    "break_seconds",
+    "paused_seconds",
+    "head_missing_seconds",
+    "gaze_missing_seconds",
+    "camera_missing_seconds",
+    "goal",
+    "data_json"
+  ],
+  "report_status": 200,
+  "has_detector_report": true
+}

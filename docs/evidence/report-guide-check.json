@@ -1,0 +1,117 @@
+{
+  "scope": "Documentation only. No new application/model/people evaluation.",
+  "runtime_files": [
+    {
+      "file": "backend/app.py",
+      "before": "679d60c1b49ff5f14c9c7e768c3bceb24537431d8741452cbc28ed0cff85e9b9",
+      "after": "679d60c1b49ff5f14c9c7e768c3bceb24537431d8741452cbc28ed0cff85e9b9",
+      "unchanged": true
+    },
+    {
+      "file": "backend/policy.py",
+      "before": "20b4970388677732847b009f9199831b39930727491f64f001c6ff157954256f",
+      "after": "20b4970388677732847b009f9199831b39930727491f64f001c6ff157954256f",
+      "unchanged": true
+    },
+    {
+      "file": "vision/adapters.py",
+      "before": "0894c7de70de2c8a566346e7b9ca9b2388b22536baa04ce84cb32cee611eeff3",
+      "after": "0894c7de70de2c8a566346e7b9ca9b2388b22536baa04ce84cb32cee611eeff3",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/main.jsx",
+      "before": "403f9afcf885beb7336db3fe28ea5d513bd3fc409ab35db96628cb76be424ee6",
+      "after": "403f9afcf885beb7336db3fe28ea5d513bd3fc409ab35db96628cb76be424ee6",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/pages.jsx",
+      "before": "136ecc002f0c2216b1c74165f53baea120a1ad11a49998740ae1fd6a63851dab",
+      "after": "136ecc002f0c2216b1c74165f53baea120a1ad11a49998740ae1fd6a63851dab",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/components.jsx",
+      "before": "a1e92eb95ad8cb6c6a7bd37e2c799d109d8d2e33387ee28ac48ebd511b7b0347",
+      "after": "a1e92eb95ad8cb6c6a7bd37e2c799d109d8d2e33387ee28ac48ebd511b7b0347",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/PdfReader.jsx",
+      "before": "c4e1eefceb4ee8b3c97a1e6ef5bcffd0bdc43a0acefde6e9a4449808b105b3e0",
+      "after": "c4e1eefceb4ee8b3c97a1e6ef5bcffd0bdc43a0acefde6e9a4449808b105b3e0",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "before": "6a10c362c6b8ce6926775f56b02a098d638d06168bcc8e66ac727b60d096267e",
+      "after": "6a10c362c6b8ce6926775f56b02a098d638d06168bcc8e66ac727b60d096267e",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/package.json",
+      "before": "4ff7d118c0640bb1b4857e8c4db4cd2f09717d07699322a6c053427287a3dba1",
+      "after": "4ff7d118c0640bb1b4857e8c4db4cd2f09717d07699322a6c053427287a3dba1",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/package-lock.json",
+      "before": "256b4687d33bd2d578d35c2bd1e74c0f9a61f5fef2bb6fd87b69a1f605d1f542",
+      "after": "256b4687d33bd2d578d35c2bd1e74c0f9a61f5fef2bb6fd87b69a1f605d1f542",
+      "unchanged": true
+    },
+    {
+      "file": "requirements.txt",
+      "before": "689eb95593cadc677472be6cf2cdd245b69302c6aad7e419547c663b5237900c",
+      "after": "689eb95593cadc677472be6cf2cdd245b69302c6aad7e419547c663b5237900c",
+      "unchanged": true
+    },
+    {
+      "file": "tests/test_backend.py",
+      "before": "1f25c0eb7397f4d3946521fdd117a072e7894d84967a10a0049a3b72d6b8d2f5",
+      "after": "1f25c0eb7397f4d3946521fdd117a072e7894d84967a10a0049a3b72d6b8d2f5",
+      "unchanged": true
+    },
+    {
+      "file": "tests/test_regressions.py",
+      "before": "f99df9f96643a7231e1c7520a3852ddc60644c95a5c57405ca86ce07ee8b7688",
+      "after": "f99df9f96643a7231e1c7520a3852ddc60644c95a5c57405ca86ce07ee8b7688",
+      "unchanged": true
+    }
+  ],
+  "checkpoints": [
+    {
+      "file": "models\\face_landmarker.task",
+      "sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+      "matches_manifest": true
+    },
+    {
+      "file": "models\\l2cs_gaze360_resnet50.safetensors",
+      "sha256": "75405bdc01f7086b3887280fe50c28a14bc62463a53fa749781e4a3cf98eca0e",
+      "matches_manifest": true
+    },
+    {
+      "file": "models\\L2CSNet_gaze360.pkl",
+      "sha256": "ace30fe5cf10e3283c12e525e230d33f6b893466d4ad59d835aebe29f162f746",
+      "matches_manifest": true
+    }
+  ],
+  "source_pdfs": [
+    {
+      "repo": "docs/inputs/FocusStudy_Dac_ta_Thiet_ke_Ke_hoach.pdf",
+      "sha256": "4333cbe8072c319b6b6ad5a9d8007791db4fab45909bec1d4b52bdc0fe9e8d53",
+      "matches_supplied": true
+    },
+    {
+      "repo": "docs/inputs/De_xuat_HCI_Nhom_5.pdf",
+      "sha256": "c7aa1a2ed565af7402d68f7593a3b13d0dd15c47bacd6a391b42e04c71959de2",
+      "matches_supplied": true
+    }
+  ],
+  "pdf": "94d472a8ea0f095affa302f4756765b7dab30ab0c9015a26726cfff3048734ac",
+  "pages": 41,
+  "rendered_pages": 41,
+  "application_tests_rerun": false,
+  "prior_test_result": "27 passed; historical evidence only"
+}

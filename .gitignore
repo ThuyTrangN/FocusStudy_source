@@ -23,3 +23,5 @@ recordings/
 dist/
 build/
 *.log
+tmp/
+/data/
